@@ -15,14 +15,14 @@
 <meta property="og:site_name" content="Blog of vox">
 <meta property="og:description" content="Step 1：下载安装nodejs、Git​    因为hexo是基于nodejs生成的，所以需要首先安装nodejs。进入nodejs.org网址，下载对应系统下的LTS版本，然后进行安装，默认安装即可。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/..%5Cimg_blog1%5Cfiles.png">
-<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/..%5Cimg_blog1%5Cgit.png">
-<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/..%5Cimg_blog1%5Cdeploy.png">
+<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/files.png">
+<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/git.png">
+<meta property="og:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/deploy.png">
 <meta property="article:published_time" content="2020-03-21T09:57:00.952Z">
-<meta property="article:modified_time" content="2020-03-22T10:31:42.530Z">
+<meta property="article:modified_time" content="2020-03-22T10:57:58.157Z">
 <meta property="article:author" content="vox">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/..%5Cimg_blog1%5Cfiles.png">
+<meta name="twitter:image" content="https://vox1995.github.io/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/files.png">
   
     <link rel="alternative" href="/atom.xml" title="Blog of vox" type="application/atom+xml">
   
@@ -180,19 +180,19 @@
 <p>​    输入以下代码初始化hexo：</p>
 <p>​    hexo init</p>
 <p>​    初始化完成后，可以在文件夹中发现如下内容：</p>
-<p><img src="..%5Cimg_blog1%5Cfiles.png" alt="files"></p>
+<p><img src="files.png" alt="files"></p>
 <p>​    然后输入 hexo s 开始运行，运行启动后会返回用于一个本地查看的链接，默认链接为：        </p>
 <p>​    <a href="http://localhost:4000">http://localhost:4000</a></p>
 <p>​    可以在浏览器中输入上述网址查看生成的效果。</p>
 <h2 id="Step-4：部署hexo到Github的准备工作"><a href="#Step-4：部署hexo到Github的准备工作" class="headerlink" title="Step 4：部署hexo到Github的准备工作"></a>Step 4：部署hexo到Github的准备工作</h2><p>​    首先登陆GitHub，新建一个库，库名需设置为固定格式如下：</p>
 <p>​    id.github.io</p>
 <p>​    其中id代表所登陆的Github账号id，如下图所示：</p>
-<p><img src="..%5Cimg_blog1%5Cgit.png" alt="git"></p>
+<p><img src="git.png" alt="git"></p>
 <p>​    请忽略上述报错信息，正常第一次创建不会出现。创建完成后，便可以得到一个属于你的仓库地址，可用于部署上一步新建的hexo项目。</p>
 <p>​    然后输入下面代码安装Git部署的插件：</p>
 <p>​    npm install hexo-deployer-git –save</p>
 <h2 id="Step-5：部署hexo到Github"><a href="#Step-5：部署hexo到Github" class="headerlink" title="Step 5：部署hexo到Github"></a>Step 5：部署hexo到Github</h2><p>​    修改文件夹下的配置文件 _config.yml （可以在Git Bash中使用vim修改，也可使用其他文本编辑器进行修改，如Notepad++）。在配置文件最后将部署部分的type和repo修改如下，repo部分就是在上一步中新建的仓库地址，为了规范期间，同时新增了branch。</p>
-<p><img src="..%5Cimg_blog1%5Cdeploy.png" alt="deploy"></p>
+<p><img src="deploy.png" alt="deploy"></p>
 <p>​    然后便可以进行部署工作了，在Git Bash中输入下面代码：</p>
 <p>​    hexo  d</p>
 <p>​    开始推送后，会要求输入GitHub的账号和密码，依次输入即可。</p>
