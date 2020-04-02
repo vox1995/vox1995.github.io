@@ -6,15 +6,25 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://vox1995.github.io">
-  <title>Archives | blog of vox</title>
+  <title>tinyhttpd源码分析 | blog of vox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="blog of vox">
-<meta property="og:url" content="https://vox1995.github.io/archives/index.html">
+  <meta name="description" content="0. 介绍​    最近在学习TCP&#x2F;IP相关知识，对于网络通信的数据传输方法认识还不够清晰，所以将运行过的tinyhttpd代码重新进行了梳理，以下为目前的理解认识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tinyhttpd源码分析">
+<meta property="og:url" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="blog of vox">
+<meta property="og:description" content="0. 介绍​    最近在学习TCP&#x2F;IP相关知识，对于网络通信的数据传输方法认识还不够清晰，所以将运行过的tinyhttpd代码重新进行了梳理，以下为目前的理解认识。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.jpg">
+<meta property="og:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/2.jpg">
+<meta property="og:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/3.jpg">
+<meta property="og:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/4.jpg">
+<meta property="og:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/5.jpg">
+<meta property="article:published_time" content="2020-04-01T13:32:22.008Z">
+<meta property="article:modified_time" content="2020-04-02T14:21:06.721Z">
 <meta property="article:author" content="vox">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://vox1995.github.io/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="blog of vox" type="application/atom+xml">
   
@@ -136,76 +146,146 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-tinyhttpd源码分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      tinyhttpd源码分析
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="archive-article-date">
+
+        
+        <a href="/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="archive-article-date">
   	<time datetime="2020-04-01T13:32:22.008Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-01</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/04/01/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">tinyhttpd源码分析</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0. 介绍"></a>0. 介绍</h2><p>​    最近在学习TCP/IP相关知识，对于网络通信的数据传输方法认识还不够清晰，所以将运行过的<strong>tinyhttpd</strong>代码重新进行了梳理，以下为目前的理解认识。</p>
+<a id="more"></a>
 
-        <div class="article-info info-on-right">
-          
-          
+<h2 id="1：tinyhttpd主函数"><a href="#1：tinyhttpd主函数" class="headerlink" title="1：tinyhttpd主函数"></a>1：tinyhttpd主函数</h2><p>​    <strong>main</strong>函数代码如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    int server_sock = -1;</span><br><span class="line">    u_short port = 4000;</span><br><span class="line">    int client_sock = -1;</span><br><span class="line">    struct sockaddr_in client_name;</span><br><span class="line">    socklen_t  client_name_len = sizeof(client_name);</span><br><span class="line">    pthread_t newthread;</span><br><span class="line"></span><br><span class="line">    server_sock = startup(&amp;port);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"httpd running on port %d\n"</span>, port);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (1)</span><br><span class="line">    &#123;</span><br><span class="line">        client_sock = accept(server_sock,</span><br><span class="line">                (struct sockaddr *)&amp;client_name,</span><br><span class="line">                &amp;client_name_len);</span><br><span class="line">        <span class="keyword">if</span> (client_sock == -1)</span><br><span class="line">            error_die(<span class="string">"accept"</span>);</span><br><span class="line">        /* accept_request(&amp;client_sock); */</span><br><span class="line">        <span class="keyword">if</span> (pthread_create(&amp;newthread , NULL, (void *)accept_request, (void *)(intptr_t)client_sock) != 0)</span><br><span class="line">            perror(<span class="string">"pthread_create"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    close(server_sock);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span>(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>​    首先定义一个端口<strong>port</strong>(4000)，定义服务端的套接字<strong>server_sock</strong>，客户端套接字<strong>client_sock</strong>，然后创建一个新的进程newthread，执行<strong>startup()</strong>后打印运行端口，进入循环等待接收消息。</p>
+<p>​    主函数流程图如下所示：    </p>
+<p><img src="./tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.jpg" alt="deploy"></p>
+<p>​    需要注意的关键函数为<strong>pthread_create()</strong>，创建线程函数，它的功能是创建线程（实际上就是确定调用该线程函数的入口点），在线程创建以后，就开始运行相关的线程函数，其定义如下： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int pthread_create(pthread_t *tidp, const pthread_attr_t *attr, (void*)(*start_rtn)(void*),</span><br><span class="line">void *arg);</span><br></pre></td></tr></table></figure>
+
+<p>​    返回值为0时，调用成功；返回值为-1时，表示出错。它的第一个参数为指向线程标识符的指针，第二个参数用来设置线程属性，第三个参数是线程运行函数的起始地址，最后一个参数是运行函数的参数。这里相当于把客户端的套接字client_sock传递给了accept_request函数作为参数运行。</p>
+<h2 id="2-accept-request-函数"><a href="#2-accept-request-函数" class="headerlink" title="2. accept_request()函数"></a>2. accept_request()函数</h2><p>​    为了便于阅读，后面的部分就不放置源码了，源码附在文末部分了。</p>
+<p>​    这个函数是主要的处理请求的函数，根据client_sock来进行不同的操作处理。首先需要读取client_sock，判断请求的类型为”GET”还是”POST”，然后再判断有无动态请求修改cgi标识符的值，若cgi=1，执行execute_cgi()函数；若cgi为0，执行serve_file()函数，返回htdocs目录下的index.html文件(静态页面)。执行流程图如下所示：</p>
+<p><img src="./tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/2.jpg" alt="deploy"></p>
+<h2 id="3-execute-cgi-函数"><a href="#3-execute-cgi-函数" class="headerlink" title="3. execute_cgi()函数"></a>3. execute_cgi()函数</h2><p>​    这里首先需要介绍一下linux的管道机制。管道是一种通信机制，通常用于进程间的通信（也可通过socket进行网络通信），它表现出来的形式将前面每一个进程的输出（stdout）直接作为下一个进程的输入（stdin）。管道的本质是<strong>内存中的缓冲区</strong>，可以看作是打开到内存中的文件。所以需要使用两个文件描述符来索引它，一个表示<strong>读端</strong>，一个表示<strong>写端</strong>。并且规定，<strong>数据只能从读端读取、只能往写端写入</strong>。 使用函数<strong>pipe()</strong>可以创建匿名管道，需要包含头文件 <strong>unistd.h</strong>，示例部分代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int cgi_output[2];</span><br><span class="line">int cgi_input[2];</span><br><span class="line">pipe(cgi_output);</span><br><span class="line">pipe(cgi_input);</span><br></pre></td></tr></table></figure>
+
+<p>​    首先创建两个带 2 个元素的整型数组，然后将该数组作为<strong>pipe()</strong>的参数。pipe()执行成功后，数组元素 cgi_output[0]的值就会变成所创建的管道的<strong>读端</strong>的文件描述符，cgi_output[1]就会变成<strong>写端</strong>的文件描述符，cgi_input同理。管道创建完成，然后创建子进程，子进程会继承这一个管道，也就保证了父进程与子进程操作的是同一个管道。</p>
+<p>​    然后调用<strong>fork()</strong>函数创建子进程，fork有个奇妙之处就是它仅仅被调用一次，却能够返回两次。它调用创建一个与原来进程几乎完全相同的进程，该函数有三种可能的返回值：</p>
+<p>​    1）在父进程中，fork返回新创建子进程的进程ID；<br>        2）在子进程中，fork返回0；<br>        3）如果出现错误，fork返回一个负值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pid_t pid;</span><br><span class="line">pid &#x3D; fork();</span><br><span class="line">if (pid &#x3D;&#x3D; 0)  &#x2F;* 进入子进程 *&#x2F;</span><br><span class="line"> &#123;</span><br><span class="line">  dup2(cgi_output[1], 1);		&#x2F;&#x2F;标准输出重定向到 output 管道的写入端</span><br><span class="line">  dup2(cgi_input[0], 0);		&#x2F;&#x2F;标准输入重定向到 input 管道的读取端</span><br><span class="line">  close(cgi_output[0]);			&#x2F;&#x2F;关闭 output 管道的写入端</span><br><span class="line">  close(cgi_input[1]);			&#x2F;&#x2F;关闭输出端</span><br><span class="line">  ....&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    其中的<strong>dup2</strong>(cgi_input[0], 0);就是将标准输入的文件描述符 0，指向了cgi_input管道的读端 。这里使用到的<strong>文件描述符</strong>，本质是非负整数，通常是小整数；它是一个索引，通过该索引可以找到对应的文件。例如，标准输入、标准输出、标准错误的文件描述符默认是 0、1、2 。当进程需要从标准输入中读取数据时，就会通过 0 索引找到标准输入所对应的内存缓冲区来读取数据。</p>
+<p>​    进入子进程后，首先设置相应的环境变量，用来返回主进程使用，然后调用<strong>execl</strong>(path, path, NULL)函数，用exec函数可以把当前进程替换为一个新进程，且新进程与原进程有相同的PID，第一个path参数表示你要启动程序的名称包括路径名，第二个参数表示启动程序所带的参数，此处即为执行目录下的CGI脚本。流程图如下所示：</p>
+<p><img src="./tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/3.jpg" alt="deploy"></p>
+<h2 id="4-实现效果"><a href="#4-实现效果" class="headerlink" title="4. 实现效果"></a>4. 实现效果</h2><p>​    由于没有使用到项目中的<strong>simpleclient.c</strong>客户端部分，对Makefile文件进行了修改，只编译生成服务器端的可执行文件，代码如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">httpd: httpd.c</span><br><span class="line">	gcc -W -Wall -o server httpd.c -lpthread</span><br><span class="line">clean:</span><br><span class="line">	rm server</span><br></pre></td></tr></table></figure>
+
+<p>​    编译运行的系统为虚拟机中运行的Ubuntu14.04，服务器开始运行效果如下所示，在浏览器中输入对应端口后，服务器收到请求，创建线程，然后调用serve_file返回静态主页。</p>
+<p><img src="./tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/4.jpg" alt="deploy"></p>
+<p>​    在其中的输入框输入green后回车，效果如下图所示，服务端再次创建了一个线程，然后执行了execute_cgi函数，最后调用了color.cgi输出到客户端(浏览器)。</p>
+<p><img src="./tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/5.jpg" alt="deploy"></p>
+<h2 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h2><p>​    由于整个项目是由c语言搭建的，并且redis以及nginx也都是c语言实现的，后续还可能会接触到。所以对于此项目的一些c语言特性也需要补充了解，例如：</p>
+<p>​    1、void * : 无类型指针，常用于参数接口的定义，任意类型都可以转化为void *;</p>
+<p>​    2、void *memset(void *s, int ch, size_t n)</p>
+<p>​    memset将s中当前位置后面的n个字节用 ch 替换并返回 s 。作用是在一段内存块中填充某个给定的值，它是对较大的结构体或数组进行清零操作的一种最快方法。</p>
+<p>​    项目完整代码上传到了GitHub仓库中，其中 httpd.c 文件为较为详细的中文注释源代码，里面对于一些库函数做了说明，项目链接：</p>
+<p>​    <a href="https://github.com/vox1995/tinyhttpd-0.1.0_linux">https://github.com/vox1995/tinyhttpd-0.1.0_linux</a> </p>
+<p>​    </p>
+<p>​    </p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>这怎么好意思<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2020-03-21T09:57:00.952Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">hexo博客搭建以及GitHub部署</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/">hexo博客搭建以及GitHub部署</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -236,8 +316,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
