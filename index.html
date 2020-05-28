@@ -201,27 +201,38 @@
 
 
   
-    <article id="post-leetcode题解-动态规划" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-webserver" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/13/leetcode%E9%A2%98%E8%A7%A3-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">leetcode题解-动态规划</a>
+      <a class="article-title" href="/2020/04/25/webserver/">webserver</a>
     </h1>
   
 
         
-        <a href="/2020/05/13/leetcode%E9%A2%98%E8%A7%A3-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="archive-article-date">
-  	<time datetime="2020-05-13T02:51:56.162Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-13</time>
+        <a href="/2020/04/25/webserver/" class="archive-article-date">
+  	<time datetime="2020-04-25T03:41:10.301Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Leetcode记录2——动态规划"><a href="#Leetcode记录2——动态规划" class="headerlink" title="Leetcode记录2——动态规划"></a>Leetcode记录2——动态规划</h2><p>​    递归和动态规划都是将原问题拆成多个子问题然后求解，他们之间最本质的区别是，动态规划保存了子问题的解，避免重复计算。  </p>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><ul>
+<li><p>学习梳理一个多并发web服务器的代码，其实现的主要功能如下：</p>
+<ul>
+<li>使用 <strong>线程池 + 非阻塞socket + epoll(ET和LT均实现) + 事件处理(Reactor和Proactor均实现)</strong> 的并发模型</li>
+<li>使用<strong>状态机</strong>解析HTTP请求报文，支持解析<strong>GET和POST</strong>请求</li>
+<li>访问服务器数据库实现web端用户<strong>注册、登录</strong>功能，可以请求服务器<strong>图片和视频文件</strong></li>
+<li>实现<strong>同步/异步日志系统</strong>，记录服务器运行状态</li>
+<li>经Webbench压力测试可以实现<strong>上万的并发连接</strong>数据交换</li>
+</ul>
+<p>通过分析代码，分步运行调试之后，增加了一些页面逻辑，实现了web用户<strong>注销</strong>的功能。</p>
+</li>
+</ul>
         
       
 
@@ -234,70 +245,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/13/leetcode%E9%A2%98%E8%A7%A3-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-leetcode题解-双指针" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/12/leetcode%E9%A2%98%E8%A7%A3-%E5%8F%8C%E6%8C%87%E9%92%88/">leetcode题解-双指针</a>
-    </h1>
-  
-
-        
-        <a href="/2020/05/12/leetcode%E9%A2%98%E8%A7%A3-%E5%8F%8C%E6%8C%87%E9%92%88/" class="archive-article-date">
-  	<time datetime="2020-05-12T03:06:46.476Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Leetcode记录1——双指针"><a href="#Leetcode记录1——双指针" class="headerlink" title="Leetcode记录1——双指针"></a>Leetcode记录1——双指针</h2><p>​    双指针主要用于遍历数组，两个指针指向不同的元素，从而协同完成任务，下面是参考题解整理的c++做题记录。 </p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/12/leetcode%E9%A2%98%E8%A7%A3-%E5%8F%8C%E6%8C%87%E9%92%88/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/04/25/webserver/">展开全文 >></a>
         </p>
       
 
@@ -347,7 +295,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="0-介绍"><a href="#0-介绍" class="headerlink" title="0. 介绍"></a>0. 介绍</h2><p>​    最近在学习TCP/IP相关知识，对于网络通信的数据传输方法认识还不够清晰，所以将运行过的<strong>tinyhttpd</strong>代码重新进行了梳理，以下为目前的理解认识。</p>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>​    最近在学习TCP/IP相关知识，对于网络通信的数据传输方法认识还不够清晰，所以将运行过的<strong>tinyhttpd</strong>代码重新进行了梳理，以下为目前的理解认识。</p>
         
       
 
