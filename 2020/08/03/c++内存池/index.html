@@ -6,15 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://vox1995.github.io">
-  <title>Archives: 2020 | blog of vox</title>
+  <title>c++内存池 | blog of vox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="blog of vox">
-<meta property="og:url" content="https://vox1995.github.io/archives/2020/index.html">
+  <meta name="description" content="C++内存管理——内存池1. 编译器处理new 表达式，创建一个复数类型如下所示： 1Complex* pc &#x3D; new Complex(1,2);">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++内存池">
+<meta property="og:url" content="https://vox1995.github.io/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/index.html">
 <meta property="og:site_name" content="blog of vox">
+<meta property="og:description" content="C++内存管理——内存池1. 编译器处理new 表达式，创建一个复数类型如下所示： 1Complex* pc &#x3D; new Complex(1,2);">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://vox1995.github.io/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/1.jpg">
+<meta property="article:published_time" content="2020-08-03T08:22:10.486Z">
+<meta property="article:modified_time" content="2020-08-03T08:31:33.688Z">
 <meta property="article:author" content="vox">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://vox1995.github.io/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="blog of vox" type="application/atom+xml">
   
@@ -136,157 +142,123 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-c++内存池" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      c++内存池
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/" class="archive-article-date">
+
+        
+        <a href="/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/" class="archive-article-date">
   	<time datetime="2020-08-03T08:22:10.486Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-08-03</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/">c++内存池</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="C-内存管理——内存池"><a href="#C-内存管理——内存池" class="headerlink" title="C++内存管理——内存池"></a>C++内存管理——内存池</h3><h4 id="1-编译器处理"><a href="#1-编译器处理" class="headerlink" title="1. 编译器处理"></a>1. 编译器处理</h4><p><code>new</code> 表达式，创建一个复数类型如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Complex* pc &#x3D; new Complex(1,2);</span><br></pre></td></tr></table></figure>
 
-        <div class="article-info info-on-right">
-          
-          
+<a id="more"></a>
 
+<p>编译器转为如下形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Complex *pc;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">void</span>* mem = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(Complex));</span><br><span class="line">    pc = <span class="keyword">static_cast</span>&lt;Complex*&gt;(mem);</span><br><span class="line">    pc-&gt;Complex::Complex(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>delete</code>表达式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete pc;</span><br></pre></td></tr></table></figure>
+
+<p>编译器转为如下形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pc-&gt;~Complex();</span><br><span class="line"><span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(pc)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-内存池"><a href="#2-内存池" class="headerlink" title="2.  内存池"></a>2.  内存池</h4><p>通过在成员函数中重载operator new() 和 operator delete() 实现内存池，可以减少调用::operator new() 的次数，测试程序如下所示，<code>MemoryPool</code> 表示内存池类，使用了嵌入式指针减少内存开销，可以直接复制在IDE环境中进行运行测试。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MemoryPool</span>&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Data</span>&#123;</span></span><br><span class="line">        <span class="keyword">int</span> m_data;</span><br><span class="line">        <span class="keyword">char</span> m_char;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">union</span>&#123;</span><br><span class="line">        Data obj;</span><br><span class="line">        MemoryPool *next;<span class="comment">//使用嵌入式指针保存下一个对象内存地址，使用时覆盖</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//do something</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span>* <span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="keyword">void</span>* deadObj, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> SIZE;</span><br><span class="line">    <span class="keyword">static</span> MemoryPool* headOfFreeList;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span>* MemoryPool::<span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">size</span> != <span class="keyword">sizeof</span>(MemoryPool))&#123;</span><br><span class="line">        <span class="keyword">return</span> ::<span class="keyword">operator</span> <span class="keyword">new</span>(<span class="built_in">size</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    MemoryPool* p = headOfFreeList;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (p)&#123;</span><br><span class="line">        headOfFreeList = p-&gt;next;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"headOfFreeList = p-&gt;next"</span> &lt;&lt; <span class="built_in">endl</span>;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        MemoryPool* newblock = <span class="keyword">static_cast</span>&lt;MemoryPool*&gt;(::<span class="keyword">operator</span> <span class="keyword">new</span>(SIZE * <span class="keyword">sizeof</span>(MemoryPool)));</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; SIZE<span class="number">-1</span>; ++i)</span><br><span class="line">            newblock[i].next = &amp; newblock[i+<span class="number">1</span>];</span><br><span class="line">        newblock[SIZE<span class="number">-1</span>].next = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        p = newblock;</span><br><span class="line">        headOfFreeList = &amp;newblock[<span class="number">1</span>];</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Create Memory List"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> MemoryPool::<span class="keyword">operator</span> <span class="title">delete</span><span class="params">(<span class="keyword">void</span>* deadObj, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (deadObj == <span class="number">0</span>)<span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">size</span> != <span class="keyword">sizeof</span>(MemoryPool))&#123;</span><br><span class="line">        ::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(deadObj)</span></span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    MemoryPool *p = <span class="keyword">static_cast</span>&lt;MemoryPool*&gt;(deadObj);</span><br><span class="line">    p-&gt;next = headOfFreeList;</span><br><span class="line">    headOfFreeList = p;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MemoryPool* MemoryPool::headOfFreeList;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MemoryPool::SIZE = <span class="number">8</span>;<span class="comment">//设置内存池大小，8个对象</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"Memorypool Test"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"sizeof(MemoryPool):"</span> &lt;&lt; <span class="keyword">sizeof</span>(MemoryPool) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">size_t</span> <span class="keyword">const</span> N = <span class="number">10</span>;<span class="comment">//创建对象数量</span></span><br><span class="line">MemoryPool* p[N];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; ++i)</span><br><span class="line">        p[i] = <span class="keyword">new</span> MemoryPool;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt; <span class="number">10</span>; ++i)</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; p[i] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">   	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt; N; ++i)</span><br><span class="line">   	     <span class="keyword">delete</span> p[i];</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/08/03/c++%E5%86%85%E5%AD%98%E6%B1%A0/1.jpg" alt="test"></p>
+<p>测试结果如上图所示，创建一个大小为10的对象会创建两个大小为8的内存池。每次对象进行new操作时，会调用重载的new函数，移动指针到下一块内存空间，移动到末尾时会创建一个新的内存池。delete操作负责将指针移动回到内存池开始位置，可供其他对象重新使用。</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>这怎么好意思<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/05/15/%E5%88%9D%E6%8E%A2gdb%E8%B0%83%E8%AF%95/" class="archive-article-date">
-  	<time datetime="2020-05-15T10:46:08.790Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-15</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2020/05/15/%E5%88%9D%E6%8E%A2gdb%E8%B0%83%E8%AF%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">初探gdb调试</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/05/15/%E5%88%9D%E6%8E%A2gdb%E8%B0%83%E8%AF%95/">初探gdb调试</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/04/25/%E5%A4%9A%E5%B9%B6%E5%8F%91web%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2020-04-25T03:41:10.301Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/04/25/%E5%A4%9A%E5%B9%B6%E5%8F%91web%E6%9C%8D%E5%8A%A1%E5%99%A8/">多并发web服务器</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/04/03/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2020-04-03T04:54:12.936Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/04/03/tinyhttpd%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">tinyhttpd源码分析</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-  	<time datetime="2020-03-21T09:57:00.952Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/03/21/hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%8F%8AGitHub%E9%83%A8%E7%BD%B2/">hexo博客搭建以及GitHub部署</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -317,8 +289,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
